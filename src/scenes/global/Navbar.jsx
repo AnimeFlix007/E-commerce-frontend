@@ -8,11 +8,12 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { shades } from "../../theme";
+import { setIsCartOpen } from "../../context/cartSlice";
 
 function Navbar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // const cart = useSelector((state) => state.cart.cart);
+  const { cart } = useSelector((store) => store.cart);
 
   return (
     <Box
@@ -54,9 +55,9 @@ function Navbar() {
             <PersonOutline />
           </IconButton>
           <Badge
-            badgeContent={5}
+            badgeContent={cart?.length}
             color="secondary"
-            // invisible={cart.length === 0}
+            invisible={cart?.length === 0}
             sx={{
               "& .MuiBadge-badge": {
                 right: 5,
@@ -68,7 +69,7 @@ function Navbar() {
             }}
           >
             <IconButton
-              // onClick={() => dispatch(setIsCartOpen({}))}
+              onClick={() => dispatch(setIsCartOpen({}))}
               sx={{ color: "black" }}
             >
               <ShoppingBagOutlined />
