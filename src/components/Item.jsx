@@ -6,6 +6,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import { shades } from "../theme";
 import { addToCart } from "../context/cartSlice";
 import { useNavigate } from "react-router-dom";
+import { urlFor } from "../Client";
 
 const Item = ({ item, width }) => {
   const navigate = useNavigate();
@@ -16,16 +17,7 @@ const Item = ({ item, width }) => {
     palette: { neutral },
   } = useTheme();
 
-  const { category, price, name, image } = item.attributes;
-  const {
-    data: {
-      attributes: {
-        formats: {
-          medium: { url },
-        },
-      },
-    },
-  } = image;
+  const { Category, Price, Image, Item } = item;
 
   return (
     <Box width={width}>
@@ -35,11 +27,11 @@ const Item = ({ item, width }) => {
         onMouseOut={() => setIsHovered(false)}
       >
         <img
-          alt={item.name}
+          alt={item?.name}
           width="300px"
           height="400px"
-          src={`http://localhost:2000${url}`}
-          onClick={() => navigate(`/item/${item.id}`)}
+          src={urlFor(Image)}
+          onClick={() => navigate(`/item/${item?._id}`)}
           style={{ cursor: "pointer" }}
         />
         <Box
@@ -79,12 +71,12 @@ const Item = ({ item, width }) => {
 
       <Box mt="3px">
         <Typography variant="subtitle2" color={neutral.dark}>
-          {category
+          {Category
             .replace(/([A-Z])/g, " $1")
             .replace(/^./, (str) => str.toUpperCase())}
         </Typography>
-        <Typography>{name}</Typography>
-        <Typography fontWeight="bold">${price}</Typography>
+        <Typography>{Item}</Typography>
+        <Typography fontWeight="bold">${Price}</Typography>
       </Box>
     </Box>
   );
