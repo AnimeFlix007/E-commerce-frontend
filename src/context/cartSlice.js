@@ -18,19 +18,20 @@ const cartSlice = createSlice({
     },
     removeFromCart: (state, action) => {
       state.cart = state.cart.filter((item) => {
-        return item.id !== action.payload.id;
+        return item._id !== action.payload.id;
       });
     },
     increaseCount: (state, action) => {
       state.cart = state.cart.map((item) => {
-        if (item.id === action.payload.id) {
+        if (item._id == action.payload.id) {
           item.count++;
         }
       });
     },
     decreaseCount: (state, action) => {
+      console.log(action);
       state.cart = state.cart.map((item) => {
-        if (item.id === action.payload.id && item.count > 1) {
+        if (item._id == action.payload.id && item.count > 1) {
           item.count--;
         }
       });

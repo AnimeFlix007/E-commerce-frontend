@@ -12,6 +12,7 @@ import {
   setIsCartOpen,
 } from "../../context/cartSlice";
 import { useNavigate } from "react-router-dom";
+import { urlFor } from "../../Client";
 
 const FlexBox = styled(Box)`
   display: flex;
@@ -24,9 +25,9 @@ const CartMenu = () => {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
   const isCartOpen = useSelector((state) => state.cart.isCartOpen);
-  console.log(isCartOpen);
+  console.log(cart);
   const totalPrice = cart.reduce((total, item) => {
-    return total + item.count * item.attributes.price;
+    return total + item?.count * item?.Price;
   }, 0);
 
   return (
@@ -65,30 +66,30 @@ const CartMenu = () => {
           {/* CART LIST */}
           <Box>
             {cart.map((item) => (
-              <Box key={`${item.attributes.name}-${item.id}`}>
+              <Box key={`${item?.Item}-${item?._id}`}>
                 <FlexBox p="15px 0">
                   <Box flex="1 1 40%">
-                    <img
-                      alt={item?.name}
+                    {item && <img
+                      alt={item?.Item}
                       width="123px"
                       height="164px"
-                      src={`http://localhost:2000${item?.attributes?.image?.data?.attributes?.formats?.medium?.url}`}
-                    />
+                      src={urlFor(item?.Image)}
+                    />}
                   </Box>
                   <Box flex="1 1 60%">
                     <FlexBox mb="5px">
                       <Typography fontWeight="bold">
-                        {item.attributes.name}
+                        {item?.Item}
                       </Typography>
                       <IconButton
                         onClick={() =>
-                          dispatch(removeFromCart({ id: item.id }))
+                          dispatch(removeFromCart({ id: item?._id }))
                         }
                       >
                         <CloseIcon />
                       </IconButton>
                     </FlexBox>
-                    <Typography>{item.attributes.shortDescription}</Typography>
+                    <Typography>{item?.Desc}</Typography>
                     <FlexBox m="15px 0">
                       <Box
                         display="flex"
@@ -97,22 +98,22 @@ const CartMenu = () => {
                       >
                         <IconButton
                           onClick={() =>
-                            dispatch(decreaseCount({ id: item.id }))
+                            dispatch(decreaseCount({ id: item?._id }))
                           }
                         >
                           <RemoveIcon />
                         </IconButton>
-                        <Typography>{item.count}</Typography>
+                        <Typography>{item?.count}</Typography>
                         <IconButton
                           onClick={() =>
-                            dispatch(increaseCount({ id: item.id }))
+                            dispatch(increaseCount({ id: item?._id }))
                           }
                         >
                           <AddIcon />
                         </IconButton>
                       </Box>
                       <Typography fontWeight="bold">
-                        ${item.attributes.price}
+                        ${item?.Price}
                       </Typography>
                     </FlexBox>
                   </Box>
