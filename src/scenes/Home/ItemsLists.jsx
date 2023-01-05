@@ -23,7 +23,7 @@ const ItemsLists = () => {
     const query = '*[_type == "Products"]';
 
     const data = await client.fetch(query);
-    console.log(data);
+    console.log(data,"............");
     dispatch(setItems(data));
   }
 
