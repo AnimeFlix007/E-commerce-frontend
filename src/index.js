@@ -7,13 +7,16 @@ import { CssBaseline } from "@mui/material";
 import { theme } from "./theme";
 import { Provider } from "react-redux";
 import { store } from "./context/store";
+import { CartProvider } from "./context/CartContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <Provider store={store}>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <App />
-    </ThemeProvider>
-  </Provider>
+  <CartProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <App />
+      </ThemeProvider>
+    </Provider>
+  </CartProvider>
 );
