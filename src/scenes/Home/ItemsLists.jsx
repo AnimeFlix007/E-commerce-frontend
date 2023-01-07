@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import Item from "../../components/Item";
 import { Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useDispatch, useSelector } from "react-redux";
-import { setItems } from "../../context/cartSlice";
 import { client } from "../../Client";
+import { CartContext } from "../../context/CartContext";
 
 const ItemsLists = () => {
-  const dispatch = useDispatch();
   const [value, setValue] = useState("all");
-  const items = useSelector((state) => state.cart.items);
+  const cart = useContext(CartContext)
   const breakPoint = useMediaQuery("(min-width:600px)");
 
   const handleChange = (event, newValue) => {
@@ -23,21 +21,20 @@ const ItemsLists = () => {
     const query = '*[_type == "Products"]';
 
     const data = await client.fetch(query);
-    console.log(data,"............");
-    dispatch(setItems(data));
+    cart.getAllItems(data)
   }
 
   useEffect(() => {
     getItems();
   }, []);
 
-  const topRatedItems = items.filter(
+  const topRatedItems = cart.allItems.filter(
     (item) => item?.Category === "topRated"
   );
-  const newArrivalsItems = items.filter(
+  const newArrivalsItems = cart.allItems.filter(
     (item) => item?.Category === "newArrivals"
   );
-  const bestSellersItems = items.filter(
+  const bestSellersItems = cart.allItems.filter(
     (item) => item?.Category === "bestSellers"
   );
 
@@ -74,7 +71,7 @@ const ItemsLists = () => {
         columnGap="1.33%"
       >
         {value === "all" &&
-          items.map((item) => (
+          cart.allItems.map((item) => (
             <Item item={item} key={`${item?.Item}-${item?.id}`} />
           ))}
         {value === "newArrivals" &&

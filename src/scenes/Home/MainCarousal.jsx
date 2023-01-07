@@ -62,7 +62,7 @@ const MainCarousel = () => {
             alt={`carousel-${index}`}
             style={{
               width: "100%",
-              height: "700px",
+              height: "70vh",
               objectFit: "cover",
               backgroundAttachment: "fixed",
             }}

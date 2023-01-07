@@ -2,24 +2,22 @@ import { Box, Button, IconButton, Typography } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Item from "../../components/Item";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { shades } from "../../theme";
-import { addToCart } from "../../context/cartSlice";
-import { useDispatch } from "react-redux";
 import { client, urlFor } from "../../Client";
+import { CartContext } from "../../context/CartContext";
 
 const ItemDetails = () => {
-  const dispatch = useDispatch();
   const { itemId } = useParams();
   const [value, setValue] = useState("description");
-  const [count, setCount] = useState(1);
   const [x, setx] = useState(0);
   const [item, setItem] = useState(null);
   const [items, setItems] = useState([]);
+  const cart = useContext(CartContext)
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -27,7 +25,6 @@ const ItemDetails = () => {
 
   async function getItem() {
     const query = '*[_type == "Products"]';
-
     const data = await client.fetch(query);
     console.log(data);
     const Reqitem = data.find((item) => {
@@ -89,11 +86,11 @@ const ItemDetails = () => {
               mr="20px"
               p="2px 5px"
             >
-              <IconButton onClick={() => setCount(Math.max(count - 1, 0))}>
+              <IconButton onClick={() => cart.removeOneFromCart(item)}>
                 <RemoveIcon />
               </IconButton>
-              <Typography sx={{ p: "0 5px" }}>{count}</Typography>
-              <IconButton onClick={() => setCount(count + 1)}>
+              <Typography sx={{ p: "0 5px" }}>{cart.getProductQuantity(item)}</Typography>
+              <IconButton onClick={() => cart.addToCart(item)}>
                 <AddIcon />
               </IconButton>
             </Box>
@@ -105,7 +102,7 @@ const ItemDetails = () => {
                 minWidth: "150px",
                 padding: "10px 40px",
               }}
-              onClick={() => dispatch(addToCart({ item: { ...item, count } }))}
+              onClick={() => cart.addToCart(item)}
             >
               ADD TO CART
             </Button>

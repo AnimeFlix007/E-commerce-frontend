@@ -2,19 +2,34 @@ import { createContext, useState } from "react";
 
 export const CartContext = createContext({
   items: [],
+  isCartOpen: false,
   getProductQuantity: () => {},
   addToCart: () => {},
   removeOneFromCart: () => {},
   deleteFromCart: () => {},
   getTotalCost: () => {},
+  CartToggle: () => {},
+  totalProductsQty: () => {},
+  getAllItems: () => {},
+  allItems: []
 });
 
 export function CartProvider({ children }) {
   const [cartProducts, setCartProducts] = useState([]);
+  const [allItems, setallItems] = useState([]);
+  const [isCartOpen, setisCartOpen] = useState(false);
+
+  function CartToggle() {
+    setisCartOpen(prev => !prev)
+  }
+
+  function getAllItems(items) {
+    setallItems([...items])
+  }
 
   function getProductQuantity(item) {
     const quantity = cartProducts.find(
-      (product) => product._id === item._id
+      (product) => product._id === item?._id
     )?.quantity;
     if (!quantity) {
       return 0;
@@ -57,7 +72,7 @@ export function CartProvider({ children }) {
     setCartProducts(cartProducts.filter((product) => product._id !== item._id));
   }
 
-  function getTotalCost(item) {
+  function getTotalCost() {
     const totalCost = cartProducts.reduce((acc, product) => {
         return acc + (product.quantity * product.Price)
     }, 0)
@@ -65,13 +80,26 @@ export function CartProvider({ children }) {
     return totalCost
   }
 
+  function totalProductsQty() {
+    const totalQty = cartProducts.reduce((acc, product) => {
+        return acc + product.quantity
+    }, 0)
+
+    return totalQty
+  }
+
   const contextValue = {
+    allItems,
+    getAllItems,
     items: cartProducts,
     getProductQuantity,
     addToCart,
     removeOneFromCart,
     deleteFromCart,
     getTotalCost,
+    isCartOpen,
+    CartToggle,
+    totalProductsQty
   };
   return (
     <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>

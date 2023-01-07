@@ -5,14 +5,11 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import styled from "@emotion/styled";
 import { shades } from "../../theme";
-import {
-  decreaseCount,
-  increaseCount,
-  removeFromCart,
-  setIsCartOpen,
-} from "../../context/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { urlFor } from "../../Client";
+import { useContext } from "react";
+import { CartContext } from "../../context/CartContext";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const FlexBox = styled(Box)`
   display: flex;
@@ -22,18 +19,14 @@ const FlexBox = styled(Box)`
 
 const CartMenu = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const cart = useSelector((state) => state.cart.cart);
-  const isCartOpen = useSelector((state) => state.cart.isCartOpen);
-  console.log(cart);
-  const totalPrice = cart.reduce((total, item) => {
-    return total + item?.count * item?.Price;
-  }, 0);
-
+  const breakPoint = useMediaQuery("(min-width:500px)");
+  const CartbreakPoint = useMediaQuery("(min-width:400px)");
+  const cart = useContext(CartContext)
+  const totlalCost = cart.getTotalCost()
   return (
     // OVERLAY
     <Box
-      display={isCartOpen ? "block" : "none"}
+      display={cart.isCartOpen ? "block" : "none"}
       backgroundColor="rgba(0, 0, 0, 0.4)"
       position="fixed"
       zIndex={10}
@@ -42,14 +35,14 @@ const CartMenu = () => {
       left="0"
       top="0"
       overflow="auto"
-      onClick={() => dispatch(setIsCartOpen({}))}
+      onClick={() => cart.CartToggle()}
     >
       {/* MODAL  */}
       <Box
         position="fixed"
         right="0"
         bottom="0"
-        width="max(400px, 30%)"
+        width={breakPoint ? "max(400px, 30%)" : "100%"}
         height="100%"
         backgroundColor="white"
         onClick={(e) => e.stopPropagation()}
@@ -57,22 +50,22 @@ const CartMenu = () => {
         <Box padding="30px" overflow="auto" height="100%">
           {/* HEADER */}
           <FlexBox mb="15px">
-            <Typography variant="h3">SHOPPING BAG ({cart.length})</Typography>
-            <IconButton onClick={() => dispatch(setIsCartOpen({}))}>
+            <Typography variant="h3">SHOPPING BAG ({cart.items.length})</Typography>
+            <IconButton onClick={cart.CartToggle}>
               <CloseIcon />
             </IconButton>
           </FlexBox>
 
           {/* CART LIST */}
           <Box>
-            {cart.map((item) => (
+            {cart.items.map((item) => (
               <Box key={`${item?.Item}-${item?._id}`}>
                 <FlexBox p="15px 0">
-                  <Box flex="1 1 40%">
+                  <Box flex={CartbreakPoint?"1 1 40%" : "11 30%"} >
                     {item && <img
                       alt={item?.Item}
-                      width="123px"
-                      height="164px"
+                      width={CartbreakPoint ? "123px" : "100px"}
+                      height={CartbreakPoint ? "164px" : "140px"}
                       src={urlFor(item?.Image)}
                     />}
                   </Box>
@@ -83,7 +76,7 @@ const CartMenu = () => {
                       </Typography>
                       <IconButton
                         onClick={() =>
-                          dispatch(removeFromCart({ id: item?._id }))
+                          cart.deleteFromCart(item)
                         }
                       >
                         <CloseIcon />
@@ -98,22 +91,22 @@ const CartMenu = () => {
                       >
                         <IconButton
                           onClick={() =>
-                            dispatch(decreaseCount({ id: item?._id }))
+                            cart.removeOneFromCart(item)
                           }
                         >
                           <RemoveIcon />
                         </IconButton>
-                        <Typography>{item?.count}</Typography>
+                        <Typography>{item?.quantity}</Typography>
                         <IconButton
                           onClick={() =>
-                            dispatch(increaseCount({ id: item?._id }))
+                            cart.addToCart(item)
                           }
                         >
                           <AddIcon />
                         </IconButton>
                       </Box>
                       <Typography fontWeight="bold">
-                        ${item?.Price}
+                        ${item?.Price * item?.quantity}
                       </Typography>
                     </FlexBox>
                   </Box>
@@ -127,7 +120,7 @@ const CartMenu = () => {
           <Box m="20px 0">
             <FlexBox m="20px 0">
               <Typography fontWeight="bold">SUBTOTAL</Typography>
-              <Typography fontWeight="bold">${totalPrice}</Typography>
+              <Typography fontWeight="bold">${totlalCost}</Typography>
             </FlexBox>
             <Button
               sx={{
@@ -140,7 +133,7 @@ const CartMenu = () => {
               }}
               onClick={() => {
                 navigate("/checkout");
-                dispatch(setIsCartOpen({}));
+                cart.CartToggle();
               }}
             >
               CHECKOUT
