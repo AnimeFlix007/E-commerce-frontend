@@ -7,6 +7,7 @@ import Navbar from "./scenes/global/Navbar";
 import Home from "./scenes/Home/Home";
 import ItemDetails from "./scenes/ItemDetails/ItemDetails";
 import Footer from "./scenes/global/Footer";
+import WishListMenu from "./scenes/global/WishListMenu";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -29,6 +30,7 @@ function App() {
         </Routes>
         <Footer />
         <CartMenu />
+        <WishListMenu />
       </BrowserRouter>
     </div>
   );

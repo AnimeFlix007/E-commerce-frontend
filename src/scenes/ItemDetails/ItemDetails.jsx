@@ -5,11 +5,13 @@ import { useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import Item from "../../components/Item";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { shades } from "../../theme";
 import { client, urlFor } from "../../Client";
 import { CartContext } from "../../context/CartContext";
+import { wishListContext } from "../../context/WishlistContext";
 
 const ItemDetails = () => {
   const { itemId } = useParams();
@@ -17,7 +19,8 @@ const ItemDetails = () => {
   const [x, setx] = useState(0);
   const [item, setItem] = useState(null);
   const [items, setItems] = useState([]);
-  const cart = useContext(CartContext)
+  const cart = useContext(CartContext);
+  const wishlist = useContext(wishListContext);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -41,7 +44,9 @@ const ItemDetails = () => {
     setItems(data);
   }
 
-  console.log(item, items);
+  const itemPresentInWishList = wishlist.items.find(
+    (product) => product._id === item?._id
+  );
 
   useEffect(() => {
     getItem();
@@ -89,7 +94,9 @@ const ItemDetails = () => {
               <IconButton onClick={() => cart.removeOneFromCart(item)}>
                 <RemoveIcon />
               </IconButton>
-              <Typography sx={{ p: "0 5px" }}>{cart.getProductQuantity(item)}</Typography>
+              <Typography sx={{ p: "0 5px" }}>
+                {cart.getProductQuantity(item)}
+              </Typography>
               <IconButton onClick={() => cart.addToCart(item)}>
                 <AddIcon />
               </IconButton>
@@ -109,8 +116,17 @@ const ItemDetails = () => {
           </Box>
           <Box>
             <Box m="20px 0 5px 0" display="flex">
-              <FavoriteBorderOutlinedIcon />
-              <Typography sx={{ ml: "5px" }}>ADD TO WISHLIST</Typography>
+              {itemPresentInWishList ? (
+                <FavoriteIcon
+                  onClick={() => wishlist.removeFromWishList(item)}
+                />
+              ) : (
+                <FavoriteBorderOutlinedIcon
+                  onClick={() => wishlist.addToWishList(item)}
+                />
+              )}
+
+              <Typography sx={{ ml: "5px", cursor: "pointer" }}>ADD TO WISHLIST</Typography>
             </Box>
             <Typography>CATEGORY: {item?.Category}</Typography>
           </Box>
@@ -164,9 +180,13 @@ const ItemDetails = () => {
           columnGap="1.33%"
           justifyContent="space-between"
         >
-          {items.filter(it => it?.Category == item?.Category && it?._id !== itemId).map((item, i) => (
-            <Item key={`${item.name}-${i}`} item={item} />
-          ))}
+          {items
+            .filter(
+              (it) => it?.Category == item?.Category && it?._id !== itemId
+            )
+            .map((item, i) => (
+              <Item key={`${item.name}-${i}`} item={item} />
+            ))}
         </Box>
       </Box>
     </Box>
