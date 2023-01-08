@@ -48,6 +48,14 @@ const ItemDetails = () => {
     (product) => product._id === item?._id
   );
 
+  function toggleWishListHandler(item) {
+    if (itemPresentInWishList) {
+      wishlist.removeFromWishList(item);
+    } else {
+      wishlist.addToWishList(item);
+    }
+  }
+
   useEffect(() => {
     getItem();
     setx(1);
@@ -115,9 +123,12 @@ const ItemDetails = () => {
             </Button>
           </Box>
           <Box>
-            <Box m="20px 0 5px 0" display="flex">
+            <Box m="20px 0 5px 0" display="flex" alignItems={"center"}>
               {itemPresentInWishList ? (
                 <FavoriteIcon
+                  style={{
+                    color: "red",
+                  }}
                   onClick={() => wishlist.removeFromWishList(item)}
                 />
               ) : (
@@ -126,7 +137,12 @@ const ItemDetails = () => {
                 />
               )}
 
-              <Typography sx={{ ml: "5px", cursor: "pointer" }}>ADD TO WISHLIST</Typography>
+              <Typography
+                onClick={() => toggleWishListHandler(item)}
+                sx={{ ml: "5px", cursor: "pointer" }}
+              >
+                ADD TO WISHLIST
+              </Typography>
             </Box>
             <Typography>CATEGORY: {item?.Category}</Typography>
           </Box>
