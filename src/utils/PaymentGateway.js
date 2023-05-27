@@ -22,7 +22,7 @@ export const displayRazorPay = async (amount) => {
     amount: amount * 100,
     name: "FootPrynt Pride",
     description: "Thanks for Purchasing",
-    image: "http://footprynt.in/images/fp_business_logo_3.png",
+    image: "https://i.imgur.com/Zb3NMb2.png",
 
     handler: function (res) {
       console.log(res);
