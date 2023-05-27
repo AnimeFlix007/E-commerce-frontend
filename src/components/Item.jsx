@@ -18,7 +18,7 @@ const Item = ({ item, width }) => {
   const { Category, Price, Image, Item } = item;
 
   const productQuantity = cart.getProductQuantity(item);
-  
+
   return (
     <Box width={width}>
       <Box
@@ -80,7 +80,7 @@ const Item = ({ item, width }) => {
           )}
         </Typography>
         <Typography>{Item}</Typography>
-        <Typography fontWeight="bold">${Price}</Typography>
+        <Typography fontWeight="bold">₹{Price}</Typography>
       </Box>
     </Box>
   );

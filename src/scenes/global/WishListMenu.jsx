@@ -1,14 +1,9 @@
-import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
-import { useSelector, useDispatch } from "react-redux";
+import { Box, Divider, IconButton, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
 import styled from "@emotion/styled";
 import { shades } from "../../theme";
-import { useNavigate } from "react-router-dom";
 import { urlFor } from "../../Client";
 import { useContext } from "react";
-import { CartContext } from "../../context/CartContext";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { wishListContext } from "../../context/WishlistContext";
 import HeartBrokenIcon from "@mui/icons-material/HeartBroken";
@@ -21,7 +16,6 @@ const FlexBox = styled(Box)`
 `;
 
 const WishListMenu = () => {
-  const navigate = useNavigate();
   const breakPoint = useMediaQuery("(min-width:500px)");
   const CartbreakPoint = useMediaQuery("(min-width:400px)");
   const wishList = useContext(wishListContext);
@@ -100,7 +94,7 @@ const WishListMenu = () => {
                           </IconButton>
                         </Box>
                         <Typography fontWeight="bold">
-                          ${item?.Price}
+                          ₹{item?.Price}
                         </Typography>
                       </FlexBox>
                     </Box>

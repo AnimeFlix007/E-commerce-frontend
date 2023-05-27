@@ -5,11 +5,11 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import styled from "@emotion/styled";
 import { shades } from "../../theme";
-import { useNavigate } from "react-router-dom";
 import { urlFor } from "../../Client";
 import { useContext } from "react";
 import { CartContext } from "../../context/CartContext";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { displayRazorPay } from "../../utils/PaymentGateway";
 
 const FlexBox = styled(Box)`
   display: flex;
@@ -18,11 +18,16 @@ const FlexBox = styled(Box)`
 `;
 
 const CartMenu = () => {
-  const navigate = useNavigate();
   const breakPoint = useMediaQuery("(min-width:500px)");
   const CartbreakPoint = useMediaQuery("(min-width:400px)");
   const cart = useContext(CartContext);
   const totlalCost = cart.getTotalCost();
+  const paymentGatewayHandler = async () => {
+    await displayRazorPay(totlalCost).then(() => {
+      cart.CartToggle();
+      cart.removeAllFromCart();
+    });
+  };
   return (
     // OVERLAY
     <Box
@@ -99,7 +104,7 @@ const CartMenu = () => {
                           </IconButton>
                         </Box>
                         <Typography fontWeight="bold">
-                          ${item?.Price * item?.quantity}
+                          ₹{item?.Price * item?.quantity}
                         </Typography>
                       </FlexBox>
                     </Box>
@@ -111,7 +116,12 @@ const CartMenu = () => {
           )}
 
           {cart.items.length === 0 && (
-            <Box height={"80%"} display="flex" alignItems={"center" } justifyContent="center">
+            <Box
+              height={"80%"}
+              display="flex"
+              alignItems={"center"}
+              justifyContent="center"
+            >
               <img
                 width="350px"
                 height="55%"
@@ -126,7 +136,7 @@ const CartMenu = () => {
             <Box m="20px 0">
               <FlexBox m="20px 0">
                 <Typography fontWeight="bold">SUBTOTAL</Typography>
-                <Typography fontWeight="bold">${totlalCost}</Typography>
+                <Typography fontWeight="bold">₹{totlalCost}</Typography>
               </FlexBox>
               <Button
                 sx={{
@@ -137,10 +147,7 @@ const CartMenu = () => {
                   padding: "20px 40px",
                   m: "20px 0",
                 }}
-                onClick={() => {
-                  // navigate("/checkout");
-                  cart.CartToggle();
-                }}
+                onClick={paymentGatewayHandler}
               >
                 CHECKOUT
               </Button>
